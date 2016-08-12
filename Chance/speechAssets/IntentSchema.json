@@ -1,0 +1,35 @@
+
+{
+  "intents": [
+    {
+      "intent": "RollFourIntent"
+    },
+    {
+      "intent": "RollSixIntent"
+    },
+    {
+      "intent": "RollEightIntent"
+    },
+    {
+      "intent": "RollTenIntent"
+    },
+    {
+      "intent": "RollTwelveIntent"
+    },
+    {
+      "intent": "RollTwentyIntent"
+    },
+    {
+      "intent": "RollOneHundredIntent"
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    },
+    {
+      "intent": "AMAZON.StopIntent"
+    },
+    {
+      "intent": "AMAZON.CancelIntent"
+    }
+  ]
+}

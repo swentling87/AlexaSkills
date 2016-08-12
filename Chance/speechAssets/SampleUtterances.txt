@@ -1,0 +1,36 @@
+
+RollFourIntent roll a four
+RollFourIntent roll a d four
+RollFourIntent roll four
+
+RollSixIntent roll a six
+RollSixIntent roll a d six
+RollSixIntent roll six
+
+RollEightIntent roll a eight
+RollEightIntent roll a d eight
+RollEightIntent roll eight
+
+RollTenIntent roll a ten
+RollTenIntent roll a d ten
+RollTenIntent roll ten
+
+RollTwelveIntent roll a twelve
+RollTwelveIntent roll a d twelve
+RollTwelveIntent roll twelve
+
+RollTwentyIntent roll a twenty
+RollTwentyIntent roll a d twenty
+RollTwentyIntent roll twenty
+
+RollOneHundredIntent roll a one hundred
+RollOneHundredIntent roll a d one hundred
+RollOneHundredIntent roll one hundred
+
+AMAZON.HelpIntent help
+
+AMAZON.StopIntent stop
+AMAZON.StopIntent close
+AMAZON.StopIntent quit
+
+AMAZON.CancelIntent cancel
