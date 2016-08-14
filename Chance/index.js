@@ -23,23 +23,56 @@ var APP_ID = undefined;//replace with 'amzn1.echo-sdk-ams.app.[your-unique-value
 var AlexaSkill = require('./AlexaSkill');
 
 /**
- * ChanceSkillSkill is a child of AlexaSkill.
+ * ChanceDiceSkillSkill is a child of AlexaSkill.
  * To read more about inheritance in JavaScript, see the link below.
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Introduction_to_Object-Oriented_JavaScript#Inheritance
  */
-var ChanceSkill = function () {
+var ChanceDiceSkill = function () {
     AlexaSkill.call(this, APP_ID);
 };
 
+var express = require('express');
+var request = require('request');
+var app = express();
+var GA_TRACKING_ID = 'UA-82449929-1';
+
+function trackEvent(category, action, label, value, callbback) {
+  var data = {
+    v: '1', // API Version.
+    tid: GA_TRACKING_ID, // Tracking ID / Property ID.
+    // Anonymous Client Identifier. Ideally, this should be a UUID that
+    // is associated with particular user, device, or browser instance.
+    cid: '555',
+    t: 'event', // Event hit type.
+    ec: category, // Event category.
+    ea: action, // Event action.
+    el: label, // Event label.
+    ev: value, // Event value.
+  };
+
+  request.post(
+    'http://www.google-analytics.com/collect', {
+      form: data
+    },
+    function(err, response) {
+      if (err) { return callbback(err); }
+      if (response.statusCode !== 200) {
+        return callbback(new Error('Tracking failed'));
+      }
+      callbback();
+    }
+  );
+}
+
 // Extend AlexaSkill
-ChanceSkill.prototype = Object.create(AlexaSkill.prototype);
-ChanceSkill.prototype.constructor = ChanceSkill;
+ChanceDiceSkill.prototype = Object.create(AlexaSkill.prototype);
+ChanceDiceSkill.prototype.constructor = ChanceDiceSkill;
 
 /**
  * Overriden to show that a subclass can override this function to initialize session state.
  */
-ChanceSkill.prototype.eventHandlers.onSessionStarted = function (sessionStartedRequest, session) {
+ChanceDiceSkill.prototype.eventHandlers.onSessionStarted = function (sessionStartedRequest, session) {
     console.log("onSessionStarted requestId: " + sessionStartedRequest.requestId
         + ", sessionId: " + session.sessionId);
 
@@ -49,8 +82,8 @@ ChanceSkill.prototype.eventHandlers.onSessionStarted = function (sessionStartedR
 /**
  * If the user launches without specifying an intent, route to the correct function.
  */
-ChanceSkill.prototype.eventHandlers.onLaunch = function (launchRequest, session, response) {
-    console.log("ChanceSkill onLaunch requestId: " + launchRequest.requestId + ", sessionId: " + session.sessionId);
+ChanceDiceSkill.prototype.eventHandlers.onLaunch = function (launchRequest, session, response) {
+    console.log("ChanceDiceSkill onLaunch requestId: " + launchRequest.requestId + ", sessionId: " + session.sessionId);
 
     var speechText = "Use this skill for games of chance and roll the dice! You can roll a four, six, eight, ten, twelve, twenty, or one hundred-sided die. For example, to roll a four-sided die you would ask Roll Four.";
     var repromptText = "Use this skill for games of chance and roll the dice! You can roll a four, six, eight, ten, twelve, twenty, or one hundred-sided die. For example, to roll a four-sided die you would ask Roll Four.";
@@ -60,14 +93,14 @@ ChanceSkill.prototype.eventHandlers.onLaunch = function (launchRequest, session,
 /**
  * Overriden to show that a subclass can override this function to teardown session state.
  */
-ChanceSkill.prototype.eventHandlers.onSessionEnded = function (sessionEndedRequest, session) {
+ChanceDiceSkill.prototype.eventHandlers.onSessionEnded = function (sessionEndedRequest, session) {
     console.log("onSessionEnded requestId: " + sessionEndedRequest.requestId
         + ", sessionId: " + session.sessionId);
 
     //Any session cleanup logic would go here.
 };
 
-ChanceSkill.prototype.intentHandlers = {
+ChanceDiceSkill.prototype.intentHandlers = {
     "RollFourIntent": function (intent, session, response) {
         var four = Math.floor(Math.random() * (5 - 1) + 1);
         response.tell(four);
@@ -136,12 +169,28 @@ ChanceSkill.prototype.intentHandlers = {
     "AMAZON.CancelIntent": function (intent, session, response) {
         var speechOutput = "Goodbye";
         response.tell(speechOutput);
+    },
+
+    //example usage in an intent handler
+    "AMAZON.NoIntent": function (intent, session, response) {
+        trackEvent(
+          'Intent',
+          'AMAZON.NoIntent',
+          'na',
+          '100', // Event value must be numeric.
+          function(err) {
+            if (err) {
+                return next(err);
+            }
+            var speechOutput = "Okay.";
+            response.tell(speechOutput);
+          });
     }
 };
 
 // Create the handler that responds to the Alexa Request.
 exports.handler = function (event, context) {
-    // Create an instance of the Chance Skill.
-    var skill = new ChanceSkill();
+    // Create an instance of the ChanceDice Skill.
+    var skill = new ChanceDiceSkill();
     skill.execute(event, context);
 };
